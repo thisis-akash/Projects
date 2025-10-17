@@ -1,0 +1,14 @@
+DROP DATABASE IF EXISTS drug_info_db;
+CREATE DATABASE drug_info_db;
+USE drug_info_db;
+
+DROP TABLE IF EXISTS drugs;
+
+CREATE TABLE drugs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(50) NOT NULL,
+  generic_name VARCHAR(1000) NOT NULL,
+  brand_name VARCHAR(255) NOT NULL,
+  company VARCHAR(255) NOT NULL,
+  launch_date DATETIME NOT NULL
+);
