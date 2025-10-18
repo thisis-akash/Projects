@@ -5,6 +5,7 @@ import cors from "cors";
 
 import v1DrugRoutes from "./routes/v1/drugRoutes.mjs"
 import v1TableConfigRoutes from "./routes/v1/tableConfigRoutes.mjs"
+import logger from "./config/logger.mjs";
 
 dotenvFlow.config();
 
@@ -20,7 +21,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url}`);
+    next();
+});
 
 app.use("/api/v1", v1DrugRoutes);
 app.use("/api/v1", v1TableConfigRoutes);
