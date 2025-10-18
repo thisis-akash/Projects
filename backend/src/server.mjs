@@ -4,24 +4,26 @@ import helmet from "helmet";
 import cors from "cors";
 
 import v1DrugRoutes from "./routes/v1/drugRoutes.mjs"
+import v1TableConfigRoutes from "./routes/v1/tableConfigRoutes.mjs"
 
 dotenvFlow.config();
 
 const app = express();
 const WEB_SERVER_PORT = process.env.WEB_SERVER_PORT;
 
+// Third party middlewares
 app.use(express.json());
-
 app.use(helmet());
-
 const corsOptions = {
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"]
 };
-
 app.use(cors(corsOptions));
 
+
+
 app.use("/api/v1", v1DrugRoutes);
+app.use("/api/v1", v1TableConfigRoutes);
 
 // Start server
 app.listen(WEB_SERVER_PORT, () => {
