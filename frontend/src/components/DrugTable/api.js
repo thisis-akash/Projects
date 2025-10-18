@@ -7,8 +7,8 @@ export const getDrugsData = async (params) => {
 
         return fetch(url).then(res => res.json())
     } catch (ex) {
-        console.error('Error fetching drugs:', err)
-        return []
+        console.error('Error in fetching drugs api:', err)
+        throw ex
     }
 }
 
@@ -17,7 +17,7 @@ export const getTableConfig = async () => {
         const url = `${API_BASE_URL}/table-config`;
         return fetch(url).then(res => res.json())
     } catch (ex) {
-        console.error('Error fetching table config:', err)
-        return { columns: [] }
+        console.error('Error in fetching table config api:', err)
+        throw ex
     }
 }

@@ -3,6 +3,7 @@ import { Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid';
 
 import { getDrugsData, getTableConfig } from './api';
+import Toast from "../Toast"
 
 import 'react-virtualized/styles.css';
 
@@ -10,14 +11,25 @@ export default function DrugTable() {
     const [companyFilter, setCompanyFilter] = useState('');
     const [drugs, setDrugs] = useState([]);
     const [tableConfig, setTableConfig] = useState({});
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
-        getTableConfig().then(tableConfig => setTableConfig(tableConfig))
+        getTableConfig()
+            .then(tableConfig => setTableConfig(tableConfig))
+            .catch(err => {
+                console.error('Error fetching table config:', err);
+            })
     }, [])
 
     useEffect(() => {
-        getDrugsData({ companyFilter }).then(data => setDrugs(data))
-    }, [companyFilter])
+        if (!tableConfig?.columns) return;
+        getDrugsData({ companyFilter })
+            .then(data => setDrugs(data))
+            .catch(err => {
+                console.error('Error fetching drugs data:', err);
+                setIsError(true);
+            })
+    }, [tableConfig, companyFilter])
 
     const companies = [...new Set(drugs.map(d => d.company))];
 
@@ -33,7 +45,7 @@ export default function DrugTable() {
         return [
             { width: 100, field: 'index', headerName: columns[0].label },
             { width: 150, field: columns[1].id, headerName: columns[1].label },
-            { width: 600, field: columns[2].id, headerName: columns[2].label, valueGetter: (value, row) => `${row.generic_name} (${row.brand_name})`},
+            { width: 600, field: columns[2].id, headerName: columns[2].label, valueGetter: (value, row) => `${row.generic_name} (${row.brand_name})` },
             { width: 500, field: columns[3].id, headerName: columns[3].label },
             { width: 180, field: columns[4].id, headerName: columns[4].label, valueGetter: (value, row) => `${new Date(value).toLocaleDateString()}` },
         ];
@@ -78,6 +90,7 @@ export default function DrugTable() {
             <h1>Drugs Table</h1>
             {renderCompanyDropdown()}
             {renderDrugsTable()}
+            {isError ? <Toast toggle={() => setIsError(false)} severity="error" message="Error fetching data" isOpen={isError} autoClose={true} /> : null}
         </div>
     );
 }
